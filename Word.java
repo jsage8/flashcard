@@ -32,5 +32,3 @@ public class Word {
         return word + "\t" + pronunciation + "\t" + definition + "\n";
     }
 }
-
-

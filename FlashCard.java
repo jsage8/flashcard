@@ -658,7 +658,7 @@ public class FlashCard extends JFrame {
             
             JLabel line1 = new JLabel("Paced FlashCard v1.0");
             JLabel line2 = new JLabel("Written by Jonathan Sage");
-            JLabel line3 = new JLabel("Compiled 2013");
+            JLabel line3 = new JLabel("Compiled 2014");
             
             line1.setHorizontalAlignment(JLabel.CENTER);
             line2.setHorizontalAlignment(JLabel.CENTER);

@@ -19,46 +19,6 @@ public class Data {
         data.add(wordData);
     }
     
-    public int getFlipCount(int index) {
-        int flipCount = 0;
-        for(WordData wordData : data) {
-            if(wordData.getWordIndex() == index && wordData.getFlipCount() > flipCount ) {
-                flipCount = wordData.getFlipCount();
-            }
-        }
-        return flipCount;
-    }
-    
-    public int getWordTime(int index) {
-        int totalTime = 0;
-        for(WordData wordData : data) {
-            if(wordData.getWordIndex() == index && !wordData.isSynonym()) {
-                totalTime += wordData.getTime();
-            }
-        }
-        return totalTime;
-    }
-    
-    public int getSynonymTime(int index) {
-        int totalTime = 0;
-        for(WordData wordData : data) {
-            if(wordData.getWordIndex() == index && wordData.isSynonym()) {
-                totalTime += wordData.getTime();
-            }
-        }
-        return totalTime;
-    }
-    
-    public int getSynonymWordTime(int index) {
-        int totalTime = 0;
-        for(WordData wordData : data) {
-            if(wordData.getWordIndex() == index) {
-                totalTime += wordData.getTime();
-            }
-        }
-        return totalTime;
-    }
-    
     @Override
     public String toString() {
         String rawData = "\tWord\tisPaused\ttime\tflipCount\n";
