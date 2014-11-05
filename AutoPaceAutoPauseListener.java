@@ -13,6 +13,8 @@ import java.io.PrintWriter;
 // @email jsage8@gmail.com
 
 public class AutoPaceAutoPauseListener implements PaceListener {
+    private final ExperimentSettings experimentSettings;
+    
     private final int wordCount;
     private final int flipCount;
     private final Word[] wordList;
@@ -36,6 +38,8 @@ public class AutoPaceAutoPauseListener implements PaceListener {
     private final File file;
     
     public AutoPaceAutoPauseListener(ExperimentSettings experimentSettings, Timer timer, JLabel textOne, JLabel textTwo, JButton beginButton, JButton flipButton, JButton nextWordButton) {
+        this.experimentSettings = experimentSettings;
+        
         this.wordCount = experimentSettings.getWordCount();
         this.flipCount = experimentSettings.getFlipCount();
         this.wordList = experimentSettings.getWordList();
@@ -139,6 +143,8 @@ public class AutoPaceAutoPauseListener implements PaceListener {
         outputStream.println(data.toString());
         outputStream.println(data.toSummary());
         outputStream.close();
+        
+        experimentSettings.setDone(true);
     }
     
     //Close existing WordData object if one exists and open a new one

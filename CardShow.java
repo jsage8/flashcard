@@ -13,14 +13,14 @@ import javax.swing.*;
 // @email jsage8@gmail.com
 
 public class CardShow extends JFrame {       
-    public CardShow(ExperimentSettings experimentSettings) {
+    public CardShow(ExperimentSettings[] experimentSettings) {
         // Add a set of image icons to the current JFrame
         URL flashcard16 = getClass().getClassLoader().getResource("resources/img/flashcard16.png");
         URL flashcard32 = getClass().getClassLoader().getResource("resources/img/flashcard32.png");
         URL flashcard64 = getClass().getClassLoader().getResource("resources/img/flashcard64.png");
         URL flashcard128 = getClass().getClassLoader().getResource("resources/img/flashcard128.png");
                 
-        java.util.List<Image> icons = new ArrayList<Image>();
+        java.util.List<Image> icons = new ArrayList<>();
         try {
             icons.add(ImageIO.read(flashcard16));
             icons.add(ImageIO.read(flashcard32));
@@ -98,7 +98,7 @@ public class CardShow extends JFrame {
         mainPanel.add(textPanel, gridBagConstraints);
         
         // Holds the word or the definition
-        JLabel textOne = new JLabel("Begin?");
+        JLabel textOne = new JLabel("");
         textOne.setFont(new Font("Arial", Font.PLAIN, 58));
         gridBagConstraints.gridy = 0;
         textPanel.add(textOne, gridBagConstraints);
@@ -123,49 +123,8 @@ public class CardShow extends JFrame {
         im.put(KeyStroke.getKeyStroke("pressed SPACE"), "none");
         im.put(KeyStroke.getKeyStroke("released SPACE"), "none");
         
-        /***********************************************************************
-         * PaceListener uses the Strategy Pattern. There are multiple 
-         * implementations of paceListener, one for each different type.
-         * The following switch statement sets the type of PaceListener used.
-         **********************************************************************/
-        PaceListener paceListener = null;
-        
-        /***********************************************************************
-         * Swing Timer is used to fire the PaceListeners that all extend 
-         * ActionListener. The ExperimentSettings time is used to set the 
-         * interval. The Timer is originally instantiated with null for the
-         * ActionListener so that I can first instantiate the ActionListener
-         * and pass it the Timer instance. Then I add that ActionListener to the
-         * Timer. This prevents a chicken and egg problem.
-         **********************************************************************/
-        Timer timer;
-        
-        switch(experimentSettings.getPace()) {
-            case "Automatic Pace":
-                timer = new Timer(experimentSettings.getTime(), null);
-                paceListener = new AutoPaceListener(experimentSettings, timer, textOne, textTwo, beginButton, flipButton, nextWordButton);
-                timer.addActionListener(paceListener);
-                timer.setActionCommand("Timer");
-                break;
-            case "Automatic Pace/Spacebar to Pause":
-                timer = new Timer(experimentSettings.getTime(), null);
-                paceListener = new AutoPaceSpacebarPauseListener(experimentSettings, timer, mainPanel, textOne, textTwo, beginButton, flipButton, nextWordButton);
-                timer.addActionListener(paceListener);
-                timer.setActionCommand("Timer");
-                break;
-            case "Automatic Pace/Automatic Pause":
-                timer = new Timer(experimentSettings.getTime(), null);
-                paceListener = new AutoPaceAutoPauseListener(experimentSettings, timer, textOne, textTwo, beginButton, flipButton, nextWordButton);
-                timer.addActionListener(paceListener);
-                timer.setActionCommand("Timer");
-                break;
-            case "Self Pace":
-                paceListener = new SelfPaceListener(experimentSettings, textOne, textTwo, beginButton, flipButton, nextWordButton);
-                break;
-        }
-        beginButton.addActionListener(paceListener);
-        flipButton.addActionListener(paceListener);
-        nextWordButton.addActionListener(paceListener);
+        MasterListener masterListener = new MasterListener(experimentSettings, mainPanel, textOne, textTwo, beginButton, flipButton, nextWordButton);
+        masterListener.newListener();
     }
     
     // Enter fullscreen exclusive mode

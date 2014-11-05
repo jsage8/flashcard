@@ -26,7 +26,7 @@ public class PacePanel extends JPanel {
         //Set default number of words to display before auto pause
         for(int i = 0; i < paceArray.length; i++) {
             HashMap<String, JComponent> hashMap = new HashMap<String, JComponent>();
-            hashMap.put("time", new JTextField("750", 5));
+            hashMap.put("time", new JTextField("5000", 5));
             hashMap.put("flipCount", new JTextField("5", 5));
             hashMap.put("wordCount", new JTextField("5", 5));
             paceOptions.add(i, hashMap);

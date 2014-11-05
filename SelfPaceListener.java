@@ -13,6 +13,8 @@ import java.io.PrintWriter;
 // @email jsage8@gmail.com
 
 public class SelfPaceListener implements PaceListener {
+    private final ExperimentSettings experimentSettings;
+    
     private final Word[] wordList;
     private int wordIndex;
     private int flipCounter;
@@ -32,6 +34,8 @@ public class SelfPaceListener implements PaceListener {
     private final File file;
     
     public SelfPaceListener(ExperimentSettings experimentSettings, JLabel textOne, JLabel textTwo, JButton beginButton, JButton flipButton, JButton nextWordButton) {
+        this.experimentSettings = experimentSettings;
+        
         this.wordList = experimentSettings.getWordList();
         this.wordIndex = 0;
         this.flipCounter = 0;
@@ -102,6 +106,10 @@ public class SelfPaceListener implements PaceListener {
     @Override
     public void startShow() {
         beginButton.setVisible(false);
+        flipButton.setText("Flip Card");
+        nextWordButton.setText("Next Card");
+        flipButton.setEnabled(true);
+        nextWordButton.setEnabled(true);
         flipButton.setVisible(true);
         nextWordButton.setVisible(true);
         textOne.setVisible(true);
@@ -125,6 +133,8 @@ public class SelfPaceListener implements PaceListener {
         outputStream.println(data.toString());
         outputStream.println(data.toSummary());
         outputStream.close();
+        
+        experimentSettings.setDone(true);
     }
     
         //Close existing WordData object if one exists and open a new one

@@ -13,6 +13,8 @@ import javax.swing.*;
 // @email jsage8@gmail.com
 
 public class AutoPaceSpacebarPauseListener implements PaceListener {
+    private final ExperimentSettings experimentSettings;
+    
     private final int flipCount;
     private final Word[] wordList;
     private int wordIndex;
@@ -34,8 +36,10 @@ public class AutoPaceSpacebarPauseListener implements PaceListener {
     private boolean isPaused;
     
     private final File file;
-    
+        
     public AutoPaceSpacebarPauseListener(ExperimentSettings experimentSettings, Timer timer, JPanel mainPanel, JLabel textOne, JLabel textTwo, JButton beginButton, JButton flipButton, JButton nextWordButton) {
+        this.experimentSettings = experimentSettings;
+        
         this.flipCount = experimentSettings.getFlipCount();
         this.wordList = experimentSettings.getWordList();
         this.wordIndex = 0;
@@ -148,9 +152,12 @@ public class AutoPaceSpacebarPauseListener implements PaceListener {
         outputStream.println(data.toString());
         outputStream.println(data.toSummary());
         outputStream.close();
+        
+        experimentSettings.setDone(true);
     }
     
     //Close existing WordData object if one exists and open a new one
+    @Override
     public void timeStamp(String word, boolean isSynonym) {
         long currentTime = System.currentTimeMillis();
         if(wordData != null) {
@@ -164,6 +171,7 @@ public class AutoPaceSpacebarPauseListener implements PaceListener {
     }
     
     //Close existing WordData object if one exists
+    @Override
     public void timeStamp() {
         long currentTime = System.currentTimeMillis();
         if(wordData != null) {

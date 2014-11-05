@@ -13,34 +13,46 @@ public class ExperimentSettings {
     private int time;
     private int flipCount;
     private int wordCount;
+    private boolean isDone;
+    private String beginMessage;
+    private String endMessage;
     
-    public ExperimentSettings(File outputFile, Word[] wordList, String pace) {
+    public ExperimentSettings(File outputFile, Word[] experimentWordList, String pace, String beginMessage, String endMessage) {
         this.outputFile = outputFile;
-        this.wordList = wordList;
+        this.wordList = experimentWordList;
         this.pace = pace;
+        this.isDone = false;
+        this.beginMessage = beginMessage;
+        this.endMessage = endMessage;
     }
     
-    public ExperimentSettings(File outputFile, Word[] wordList, String pace, int time, int flipCount) {
+    public ExperimentSettings(File outputFile, Word[] experimentWordList, String pace, int time, int flipCount, String beginMessage, String endMessage) {
         this.outputFile = outputFile;
-        this.wordList = wordList;
+        this.wordList = experimentWordList;
         this.pace = pace;
         this.time = time;
         this.flipCount = flipCount;
+        this.isDone = false;
+        this.beginMessage = beginMessage;
+        this.endMessage = endMessage;
     }
     
-    public ExperimentSettings(File outputFile, Word[] wordList, String pace, int time, int flipCount, int wordCount) {
+    public ExperimentSettings(File outputFile, Word[] experimentWordList, String pace, int time, int flipCount, int wordCount, String beginMessage, String endMessage) {
         this.outputFile = outputFile;
-        this.wordList = wordList;
+        this.wordList = experimentWordList;
         this.pace = pace;
         this.time = time;
         this.flipCount = flipCount;
         this.wordCount = wordCount;
+        this.isDone = false;
+        this.beginMessage = beginMessage;
+        this.endMessage = endMessage;
     }
     
     public File getOutputFile() {
         return outputFile;
     }
-    
+        
     public Word[] getWordList() {
         return wordList;
     }
@@ -61,9 +73,26 @@ public class ExperimentSettings {
         return wordCount;
     }
     
+    public boolean isDone() {
+        return isDone;
+    }
+    
+    public void setDone(boolean status) {
+        isDone = status;
+    }
+    
+    public String getBeginMessage() {
+        return beginMessage;
+    }
+    
+    public String getEndMessage() {
+        return endMessage;
+    }
+    
     @Override
     public String toString() {
         String experimentString = outputFile.getName() + "\n";
+        experimentString += "Experiment Word List\n";
         for(Word word : wordList) {
             experimentString += word.toString();
         }

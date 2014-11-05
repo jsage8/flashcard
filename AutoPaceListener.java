@@ -13,6 +13,8 @@ import java.io.PrintWriter;
 // @email jsage8@gmail.com
 
 public class AutoPaceListener implements PaceListener {
+    private final ExperimentSettings experimentSettings;
+    
     private final int flipCount;
     private final Word[] wordList;
     private int wordIndex;
@@ -34,6 +36,8 @@ public class AutoPaceListener implements PaceListener {
     private final File file;
     
     public AutoPaceListener(ExperimentSettings experimentSettings, Timer timer, JLabel textOne, JLabel textTwo, JButton beginButton, JButton flipButton, JButton nextWordButton) {
+        this.experimentSettings = experimentSettings;
+        
         this.flipCount = experimentSettings.getFlipCount();
         this.wordList = experimentSettings.getWordList();
         this.wordIndex = 0;
@@ -125,13 +129,15 @@ public class AutoPaceListener implements PaceListener {
         timer.stop();
         textOne.setForeground(new Color(0, 0, 0));
         textOne.setFont(new Font("Arial", Font.PLAIN, 58));
-        textOne.setText("End");
+        textOne.setText(experimentSettings.getEndMessage());
         textTwo.setVisible(false);
        
         PrintWriter outputStream = writeFile(file);
         outputStream.println(data.toString());
         outputStream.println(data.toSummary());
         outputStream.close();
+        
+        experimentSettings.setDone(true);
     }
     
     // Close existing WordData object if one exists and open a new one

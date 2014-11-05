@@ -30,7 +30,7 @@ public class FlashCard extends JFrame {
     private final JTextField experimentDateText;
     
     // Declare dropdown menu fields for taking experiment information
-    private final JComboBox paceComboBox;
+    private final JComboBox<String> paceComboBox;
     
     // Declare pace array
     private String[] paceArray = {"Automatic Pace", "Automatic Pace/Spacebar to Pause", "Automatic Pace/Automatic Pause", "Self Pace"};
@@ -66,7 +66,7 @@ public class FlashCard extends JFrame {
         URL flashcard32 = getClass().getClassLoader().getResource("resources/img/flashcard32.png");
         URL flashcard64 = getClass().getClassLoader().getResource("resources/img/flashcard64.png");
         URL flashcard128 = getClass().getClassLoader().getResource("resources/img/flashcard128.png");
-        List<Image> icons = new ArrayList<Image>();
+        List<Image> icons = new ArrayList<>();
         try {
             icons.add(ImageIO.read(flashcard16));
             icons.add(ImageIO.read(flashcard32));
@@ -78,7 +78,9 @@ public class FlashCard extends JFrame {
         }
         this.setIconImages(icons);
         
-        // Menu Bar
+        /***********************************************************************
+         * Begin Menu Bar
+         **********************************************************************/
         JMenu fileMenu = new JMenu("File");
         JMenu helpMenu = new JMenu("Help");
         
@@ -111,46 +113,80 @@ public class FlashCard extends JFrame {
         bar.add(fileMenu);
         bar.add(helpMenu);
         setJMenuBar(bar);
-        // End Menu Bar
+        /***********************************************************************
+         * End Menu Bar
+         **********************************************************************/
         
-        // Begin Main Content Panel
+        /***********************************************************************
+         * Begin Main Content Panel
+         **********************************************************************/
         JPanel mainPanel = new JPanel();
         mainPanel.setBorder(new EmptyBorder(10,10,10,10));
         mainPanel.setBackground(new Color(218, 218, 218));
         mainPanel.setLayout(new BorderLayout());
         add(mainPanel, BorderLayout.CENTER);
         
+        // Panel holds experiment information not related to pace or word list
         JPanel basicInfoPanel = new JPanel();
         basicInfoPanel.setBorder(new EmptyBorder(10,0,10,0));
         basicInfoPanel.setBackground(Color.WHITE);
         basicInfoPanel.setLayout(new BorderLayout());
         mainPanel.add(basicInfoPanel, BorderLayout.NORTH);
         
+        // Panel holds the labels for each field in the basicInfoPanel
         JPanel labelPanel = new JPanel();
         labelPanel.setLayout(new GridLayout(5, 1, 10, 10));
         labelPanel.setBackground(Color.WHITE);
         labelPanel.setBorder(new EmptyBorder(0,5,0,5));
         basicInfoPanel.add(labelPanel, BorderLayout.WEST);
         
+        // Panel holds the form fields for basicInfoPanel
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new GridLayout(5, 1, 10, 10));
         formPanel.setBackground(Color.WHITE);
         formPanel.setBorder(new EmptyBorder(0,5,0,5));
         basicInfoPanel.add(formPanel, BorderLayout.CENTER);
         
+        // Panel holds pace and word list options
         JPanel wordPacePanel = new JPanel();
-        wordPacePanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+        wordPacePanel.setLayout(new GridBagLayout());
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
         wordPacePanel.setBackground(Color.WHITE);
         mainPanel.add(wordPacePanel, BorderLayout.CENTER);
         
+        // Panel holds word list options
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        JPanel wordPanel = new JPanel();
+        wordPanel.setLayout(new GridBagLayout());
+        wordPanel.setBackground(Color.WHITE);
+        wordPacePanel.add(wordPanel, gridBagConstraints);
+        
+        // Panel holds pace options
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        JPanel pacePanel = new JPanel();
+        pacePanel.setLayout(new GridBagLayout());
+        pacePanel.setBackground(Color.WHITE);
+        wordPacePanel.add(pacePanel, gridBagConstraints);
+        
+        // Panel holds submit button
         JPanel submitPanel = new JPanel();
-        submitPanel.setBorder(new EmptyBorder(10,10,10,10));
+        submitPanel.setBorder(new EmptyBorder(10,5,10,5));
         submitPanel.setLayout(new BorderLayout());
         submitPanel.setBackground(Color.WHITE);
         mainPanel.add(submitPanel, BorderLayout.SOUTH);
-        // End Main Content Panel
+        /***********************************************************************
+         * End Main Content Panel
+         **********************************************************************/
         
-        // Begin labelPanel and formPanel Content Panel
+        /***********************************************************************
+         * Begin labelPanel and formPanel Content Panel
+         **********************************************************************/
         JLabel subjectNumberLabel = new JLabel("Subject Number: ");
         labelPanel.add(subjectNumberLabel);
         subjectNumberText = new JTextField(30);
@@ -167,7 +203,7 @@ public class FlashCard extends JFrame {
         String[] sexArray = new String[2];
         sexArray[0] = "Male";
         sexArray[1] = "Female";
-        JComboBox sexComboBox = new JComboBox(sexArray);
+        JComboBox<String> sexComboBox = new JComboBox<>(sexArray);
         formPanel.add(sexComboBox);
         
         JLabel experimentInitialsLabel = new JLabel("Experimenter's Initials: ");
@@ -183,61 +219,91 @@ public class FlashCard extends JFrame {
         experimentDateText.setText(dateFormat.format(date));
         experimentDateText.setEditable(false);
         formPanel.add(experimentDateText);
-        // End labelPanel and formPanel Content Panel
+        /***********************************************************************
+         * End labelPanel and formPanel Content Panel
+         **********************************************************************/
         
-        // Begin setup pace options cardlayout
-        JPanel wordGridPanel = new JPanel();
-        wordGridPanel.setLayout(new GridLayout(2,1,5,5));
-        wordGridPanel.setBackground(Color.WHITE);
+        // Get Word List Files
+        String[] wordListArray = getWordListFiles();
         
-        JPanel paceGridPanel = new JPanel();
-        paceGridPanel.setLayout(new GridLayout(2,1,5,5));
-        paceGridPanel.setBackground(Color.WHITE);
+        /***********************************************************************
+         * Begin wordPanel Content
+         **********************************************************************/
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new Insets(0, 5, 0, 5);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        wordPanel.add(new JLabel("Practice Word List:"), gridBagConstraints);
         
-        JPanel paceOptionGridPanel = new JPanel();
-        paceOptionGridPanel.setLayout(new GridLayout(2,1,5,5));
-        paceOptionGridPanel.setBackground(Color.WHITE);
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new Insets(0, 5, 0, 5);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        wordPanel.add(new JLabel("Experiment Word List:"), gridBagConstraints);
         
-        wordGridPanel.add(new JLabel("Word List"));
-        paceGridPanel.add(new JLabel("Pace"));
-        paceOptionGridPanel.add(new JLabel("Pace Options"));
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new Insets(5, 5, 0, 5);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        JComboBox<String> practiceWordListComboBox = new JComboBox<>(wordListArray);
+        practiceWordListComboBox.setEditable(false);
+        practiceWordListComboBox.setSelectedIndex(checkForDefault(wordListArray, "practice"));
+        wordPanel.add(practiceWordListComboBox, gridBagConstraints);
         
-        wordPacePanel.add(wordGridPanel);
-        wordPacePanel.add(paceGridPanel);
-        wordPacePanel.add(paceOptionGridPanel);
-        // End setup pace options cardLayout
-                        
-        // Begin Get Word List Files
-        ArrayList<String> wordListFiles = new ArrayList<String>(100); 
-        String wordListName;
-        File folder = new File(".");
-        File[] allFiles = folder.listFiles();
-
-        for (File allFile : allFiles) {
-            if (allFile.isFile()) {
-                wordListName = allFile.getName();
-                if(wordListName.endsWith(".txt")) {
-                    wordListFiles.add(wordListName);
-                }
-            }
-        }
-        String[] wordListArray = wordListFiles.toArray(new String[wordListFiles.size()]);
-
-        JComboBox wordListComboBox = new JComboBox(wordListArray);
-        wordListComboBox.setEditable(false);
-        wordGridPanel.add(wordListComboBox);
-        //End Get Word List Files
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new Insets(5, 5, 0, 5);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        JComboBox<String> experimentWordListComboBox = new JComboBox<>(wordListArray);
+        experimentWordListComboBox.setEditable(false);
+        practiceWordListComboBox.setSelectedIndex(checkForDefault(wordListArray, "experiment"));
+        wordPanel.add(experimentWordListComboBox, gridBagConstraints);
+        /***********************************************************************
+         * End wordPanel Content
+         **********************************************************************/
         
-        paceComboBox = new JComboBox(paceArray);
+        /***********************************************************************
+         * Begin pacePanel Content
+         **********************************************************************/
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new Insets(5, 5, 0, 25);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        pacePanel.add(new JLabel("Pace"), gridBagConstraints);
+        
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.insets = new Insets(5, 5, 0, 5);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.5;
+        pacePanel.add(new JLabel("Pace Options"), gridBagConstraints);
+        
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new Insets(5, 5, 0, 5);
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        paceComboBox = new JComboBox<>(paceArray);
         paceComboBox.addActionListener(new PaceListener());
-        paceGridPanel.add(paceComboBox);
+        pacePanel.add(paceComboBox, gridBagConstraints);
         
         // Use PacePanel Class to make a card layout for pace options
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new Insets(5, 5, 0, 0);
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         paceOptionCardPanel = new PacePanel(paceArray);
-        paceOptionGridPanel.add(paceOptionCardPanel);
+        pacePanel.add(paceOptionCardPanel, gridBagConstraints);
+        /***********************************************************************
+         * End wordPanel Content
+         **********************************************************************/    
                 
         /****************************************** 
-         * Key Binding
+         * Begin Key Binding
          * Declare, pair, and map actions used for keybinding
          * pressing 'ENTER' will act like clicking the launchButton.
          ******************************************/
@@ -251,14 +317,18 @@ public class FlashCard extends JFrame {
          * End Key Binding
          ******************************************/
         
-        //Begin launchButton
+        /***********************************************************************
+         * Begin launchButton
+         **********************************************************************/
         launchButton = new JButton("Begin Flash Cards");
         launchButton.setActionCommand("Begin Flash Cards");
         submitPanel.add(launchButton);
           
-        passer = new FrameListener(subjectNumberText, subjectAgeText, sexComboBox, experimentInitialsText, experimentDateText, wordListComboBox, paceComboBox);
+        passer = new FrameListener(subjectNumberText, subjectAgeText, sexComboBox, experimentInitialsText, experimentDateText, practiceWordListComboBox, experimentWordListComboBox, paceComboBox);
         launchButton.addActionListener(passer);
-        //End launchButton
+        /***********************************************************************
+         * End launchButton
+         **********************************************************************/
         
         pack();
     }
@@ -304,22 +374,25 @@ public class FlashCard extends JFrame {
         private final JComboBox sexComboBox;
         private final JTextField experimentInitialsText;
         private final JTextField experimentDateText;
-        private final JComboBox wordListComboBox;
+        private final JComboBox practiceWordListComboBox;
+        private final JComboBox experimentWordListComboBox;
         private JComboBox paceComboBox;
         
         public FrameListener(JTextField subjectNumberText, 
                 JTextField subjectAgeText, 
                 JComboBox sexComboBox, 
                 JTextField experimentInitialsText, 
-                JTextField experimentDateText, 
-                JComboBox wordListComboBox, 
+                JTextField experimentDateText,
+                JComboBox practiceWordListComboBox,
+                JComboBox experimentWordListComboBox, 
                 JComboBox paceComboBox) {
             this.subjectNumberText = subjectNumberText;
             this.subjectAgeText = subjectAgeText;
             this.sexComboBox = sexComboBox;
             this.experimentInitialsText = experimentInitialsText;
             this.experimentDateText = experimentDateText;
-            this.wordListComboBox = wordListComboBox;
+            this.practiceWordListComboBox = practiceWordListComboBox;
+            this.experimentWordListComboBox = experimentWordListComboBox;
             this.paceComboBox = paceComboBox;
         }
                
@@ -337,14 +410,15 @@ public class FlashCard extends JFrame {
                 String subjectSex = (String)sexComboBox.getSelectedItem();
                 String experimentInitials = experimentInitialsText.getText();
                 String experimentDate = experimentDateText.getText();
-                String wordList = (String)wordListComboBox.getSelectedItem();
+                String practiceWordList = (String)practiceWordListComboBox.getSelectedItem();
+                String experimentWordList = (String)experimentWordListComboBox.getSelectedItem();
                 String experimentPace = (String)paceComboBox.getSelectedItem();
                 int paceIndex = paceComboBox.getSelectedIndex();
                 HashMap<String, String> paceOptions = paceOptionCardPanel.getPaceOptions(paceIndex);
                 
                 if(validateUserInput(subjectNumber, subjectAge, experimentInitials, experimentDate, paceOptions)) {
-                    printUserInput(subjectNumber, subjectAge, subjectSex, experimentInitials, experimentDate, wordList, experimentPace, paceOptions);
-                    ExperimentSettings experimentSettings = setExperimentSettings(subjectNumber, readWordList(wordList), experimentPace, paceOptions);
+                    printUserInput(subjectNumber, subjectAge, subjectSex, experimentInitials, experimentDate, practiceWordList, experimentWordList, experimentPace, paceOptions);
+                    ExperimentSettings[] experimentSettings = setExperimentSettings(subjectNumber, readWordList(practiceWordList), readWordList(experimentWordList), experimentPace, paceOptions);
                     FlashCard.this.dispose();
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
@@ -463,7 +537,15 @@ public class FlashCard extends JFrame {
             }
         }
         
-        private void printUserInput(String subjectNumber, String subjectAge, String subjectSex, String experimentInitials, String experimentDate, String wordList, String experimentPace, HashMap<String, String> paceOptions) {
+        private void printUserInput(String subjectNumber, 
+                String subjectAge, 
+                String subjectSex, 
+                String experimentInitials, 
+                String experimentDate, 
+                String practiceWordList, 
+                String experimentWordList, 
+                String experimentPace, 
+                HashMap<String, String> paceOptions) {
             File fileObject = new File(subjectNumber + ".txt");
             PrintWriter outputStream = writeFile(fileObject);
             outputStream.println("Subject Number:\t" + subjectNumber);
@@ -471,7 +553,8 @@ public class FlashCard extends JFrame {
             outputStream.println("Subject Sex:\t" + subjectSex);
             outputStream.println("Experimenter Initials:\t" + experimentInitials);
             outputStream.println("Experiment Date:\t" + experimentDate);
-            outputStream.println("Experiment Word List:\t" + wordList);
+            outputStream.println("Practice Word List:\t" + practiceWordList);
+            outputStream.println("Experiment Word List:\t" + experimentWordList);
             outputStream.println("Experiment Pace:\t" + experimentPace);
             switch(experimentPace) {
                 case "Automatic Pace":
@@ -495,7 +578,7 @@ public class FlashCard extends JFrame {
         }
         
         private ArrayList<Word> readWordList(String wordList) {
-            ArrayList<Word> words = new ArrayList<Word>();
+            ArrayList<Word> words = new ArrayList<>();
             File fileObject = new File(wordList);
             try {
                 FileReader inputStream = new FileReader(fileObject);
@@ -519,30 +602,39 @@ public class FlashCard extends JFrame {
         }
     }
     
-    private ExperimentSettings setExperimentSettings(String subjectNumber, ArrayList<Word> wordList, String experimentPace, HashMap<String, String> paceOptions) {
+    private ExperimentSettings[] setExperimentSettings(String subjectNumber, ArrayList<Word> practiceWordList, ArrayList<Word> experimentWordList, String experimentPace, HashMap<String, String> paceOptions) {
         File outputFile = new File(subjectNumber + ".txt");
-        ExperimentSettings experimentSettings = null;
-        Word[] wordListArray = wordList.toArray(new Word[wordList.size()]);
+        ExperimentSettings[] experimentSettings = new ExperimentSettings[2];
+        Word[] practiceWordListArray = practiceWordList.toArray(new Word[practiceWordList.size()]);
+        Word[] experimentWordListArray = experimentWordList.toArray(new Word[experimentWordList.size()]);
         int time = Integer.parseInt(paceOptions.get("time"));
         int flipCount = Integer.parseInt(paceOptions.get("flipCount"));
         int wordCount = Integer.parseInt(paceOptions.get("wordCount"));
+        String practiceBegin = "Begin Practice?";
+        String practiceEnd = "End Practice";
+        String experimentBegin = "Begin Experiment?";
+        String experimentEnd = "End";
         switch(experimentPace) {
             case "Automatic Pace":
-                experimentSettings = new ExperimentSettings(outputFile, wordListArray, experimentPace, time, flipCount);
+                experimentSettings[0] = new ExperimentSettings(outputFile, practiceWordListArray, experimentPace, time, flipCount, practiceBegin, practiceEnd);
+                experimentSettings[1] = new ExperimentSettings(outputFile, experimentWordListArray, experimentPace, time, flipCount, experimentBegin, experimentEnd);
                 break;
             case "Automatic Pace/Spacebar to Pause":
-                experimentSettings = new ExperimentSettings(outputFile, wordListArray, experimentPace, time, flipCount);
+                experimentSettings[0] = new ExperimentSettings(outputFile, practiceWordListArray, experimentPace, time, flipCount, practiceBegin, practiceEnd);
+                experimentSettings[1] = new ExperimentSettings(outputFile, experimentWordListArray, experimentPace, time, flipCount, experimentBegin, experimentEnd);
                 break;
             case "Automatic Pace/Automatic Pause":
-                experimentSettings = new ExperimentSettings(outputFile, wordListArray, experimentPace, time, flipCount, wordCount);
+                experimentSettings[0] = new ExperimentSettings(outputFile, practiceWordListArray, experimentPace, time, flipCount, wordCount, practiceBegin, practiceEnd);
+                experimentSettings[1] = new ExperimentSettings(outputFile, experimentWordListArray, experimentPace, time, flipCount, wordCount, experimentBegin, experimentEnd);
                 break;
             case "Self Pace":
-                experimentSettings = new ExperimentSettings(outputFile, wordListArray, experimentPace);
+                experimentSettings[0] = new ExperimentSettings(outputFile, practiceWordListArray, experimentPace, practiceBegin, practiceEnd);
+                experimentSettings[1] = new ExperimentSettings(outputFile, experimentWordListArray, experimentPace, experimentBegin, experimentEnd);
                 break;
         }
         return experimentSettings;
     }
-    
+        
     private class ErrorWindow extends JFrame {
         public ErrorWindow(String e) {
             String errorMessage = e;
@@ -656,7 +748,7 @@ public class FlashCard extends JFrame {
             aboutPanel.setBorder(new EmptyBorder(20,0,20,0));
             add(aboutPanel);
             
-            JLabel line1 = new JLabel("Paced FlashCard v1.0");
+            JLabel line1 = new JLabel("Paced FlashCard v1.1");
             JLabel line2 = new JLabel("Written by Jonathan Sage");
             JLabel line3 = new JLabel("Compiled 2014");
             
@@ -683,6 +775,24 @@ public class FlashCard extends JFrame {
         }
     }
     
+    private String[] getWordListFiles() {
+        ArrayList<String> wordListFiles = new ArrayList<>(100); 
+        String wordListName;
+        File folder = new File(".");
+        File[] allFiles = folder.listFiles();
+
+        for (File allFile : allFiles) {
+            if (allFile.isFile()) {
+                wordListName = allFile.getName();
+                if(wordListName.endsWith(".txt")) {
+                    wordListFiles.add(wordListName);
+                }
+            }
+        }
+        String[] wordListArray = wordListFiles.toArray(new String[wordListFiles.size()]);
+        return wordListArray;
+    }
+    
     /***************************************************************************
      * Returns a subject number based on the data text files in the same working
      * directory. For example, if subject_0001 exists, but not subject_0002, it 
@@ -707,6 +817,15 @@ public class FlashCard extends JFrame {
             }
         }
         return subjectNumber;
+    }
+    
+    private int checkForDefault(String[] wordListArray, String prefix) {
+        for(int i = 0; i < wordListArray.length; i++) {
+            if(wordListArray[i].matches("practice.*")) {
+                return i;
+            }
+        }
+        return 0;
     }
     
     // Returns PrintWriter object for writing experiment information to file
